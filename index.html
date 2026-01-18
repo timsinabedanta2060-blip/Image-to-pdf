@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image to PDF Converter</title>
+
+  <!-- jsPDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 40px;
+      text-align: center;
+    }
+    .container {
+      background: #ffffff;
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Image to PDF Converter</h2>
+    <p>Select one or more images and convert them into a single PDF file.</p>
+
+    <input type="file" id="images" accept="image/*" multiple>
+    <button onclick="convertToPDF()">Convert to PDF</button>
+  </div>
+
+  <script>
+    async function convertToPDF() {
+      const files = document.getElementById('images').files;
+
+      if (files.length === 0) {
+        alert("Please select at least one image.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+
+      for (let i = 0; i < files.length; i++) {
+        const imgData = await readFile(files[i]);
+
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 10, 10, 190, 270);
+      }
+
+      pdf.save("images-to-pdf.pdf");
+    }
+
+    function readFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+</body>
+</html>
